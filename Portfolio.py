@@ -3,22 +3,22 @@ import finnhub
 import datetime
 import yahoo_earnings_calendar
 import json
+import time
 from keys import finnhub_api_key
 
 # Setup Imports
 finnhub_client = finnhub.Client(api_key=finnhub_api_key)
 yec = yahoo_earnings_calendar.YahooEarningsCalendar()
 
+curr_stocks = ['ABNB','DIS','UBER','SNOW','EXPE','BABA','BA','DDOG','LUV','TGT','ALK','CVNA']
 
-stockStatistics = []
+watchlist_stocks = ['XOM','JNJ','NFLX','PINS','PYPL','NVDA','V']
 
-curr_stocks=['ABNB','DIS','UBER','SNOW','EXPE','BABA','BA','DDOG','LUV','TGT','ALK','CVNA']
-
-def createStockDetails(stocks: list):
+def createStockDetails(stocks):
     
     stockStatistics = []
 
-    for stock in curr_stocks:
+    for stock in stocks:
 
         print(stock)
 
@@ -26,6 +26,7 @@ def createStockDetails(stocks: list):
         priceTargets = {}
         stockStats = {}
         currentPrice = {}
+        stockRecommendations = {}
 
         # Finnhub Price Target Data
 
@@ -78,27 +79,49 @@ def createStockDetails(stocks: list):
         stockStats['Outstanding Shares'] = outstandingShares
         stockStats['Next Earnings Date'] = nextDateFormatted
 
+        # Stock Recommendations
+
+        stockRecs = finnhub_client.recommendation_trends(stock)
+
+        stockRecommendations['Strong Buy'] = stockRecs[0].get('strongBuy')
+        stockRecommendations['Buy'] = stockRecs[0].get('buy')
+        stockRecommendations['Hold'] = stockRecs[0].get('hold')
+        stockRecommendations['Sell'] = stockRecs[0].get('sell')
+        stockRecommendations['Strong Sell'] = stockRecs[0].get('strongSell')
+        stockRecommendations['Last Update'] = stockRecs[0].get('period')
+
         stockDetails['Ticker'] = stock
         stockDetails['Stock Information'] = stockStats
         stockDetails['Stock Pricing'] = currentPrice
         stockDetails['Stock Price Targets'] = priceTargets
+        stockDetails['Stock Recommendations'] = stockRecommendations
 
         stockStatistics.append(stockDetails)
-
     return stockStatistics
 
-stockDetails = createStockDetails(curr_stocks)
+def createFile(data, name):
+    currentDate = datetime.date.today().strftime("%Y%m%d")
+    outfileName = "Data/" + name + "_" + currentDate + ".json"
+    
+    with open(outfileName, 'w') as outfile:
+        json.dump(data,outfile)
 
-stockDetailsFormatted = json.dumps(stockDetails,indent=2)
+print("Getting Stock Data for Owned Stocks")
 
-currentDate = datetime.date.today().strftime("%Y%m%d")
+currStockDetails = createStockDetails(curr_stocks)
+currStockDetailsFormatted = json.dumps(currStockDetails,indent=2)
+createFile(currStockDetails, "owned_stocks")
 
-outfileName = "Data/owned_stocks_data_" + currentDate + ".json"
+print(currStockDetailsFormatted)
 
-with open(outfileName, 'w') as outfile:
-    json.dump(stockDetails,outfile)
+print("Sleeping for 60 seconds!")
+time.sleep(60)
+print("Sleep Ends!")
 
-# print(airbnbNextEarningsUnix)
-# print(airbnbNextEarningDate)
-# print(quote)
-print(stockDetailsFormatted)
+print("Getting Stock Data for Watch List Stocks")
+
+watchlistStocksDetails = createStockDetails(watchlist_stocks)
+watchlistStocksDetailsFormatted = json.dumps(watchlistStocksDetails, indent=2)
+createFile(watchlistStocksDetails, "watchlist_stocks")
+
+print(watchlistStocksDetailsFormatted)
