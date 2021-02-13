@@ -1,1 +1,1 @@
-finnhub_api_key = 'XXXXXXXXXXXXXXXXX'
+finnhub_api_key = 'XXXXXXXXXXXXXXXX'

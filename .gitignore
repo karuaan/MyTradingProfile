@@ -133,3 +133,4 @@ trading_profile_env
 trading_profile_env/*
 
 # Keys
+keys.py
