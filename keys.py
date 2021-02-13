@@ -1,1 +1,0 @@
-finnhub_api_key = 'XXXXX'
