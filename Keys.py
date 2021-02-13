@@ -1,1 +1,1 @@
-finnhub_api_key = 'XXXXXXXXXXXXXXXX'
+finnhub_api_key = 'DUmmyTets'
