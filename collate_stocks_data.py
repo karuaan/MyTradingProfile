@@ -159,7 +159,7 @@ def createStockDetails(stocks, name, name_analyst):
         currentPrice["Low"] = lowPrice
         currentPrice["Previous Close"] = previousClose
         currentPrice["Change Open to Close"] = changeOpenToClose
-        currentPrice["Change High Low"] = changeHighLow
+        currentPrice["Daily Change"] = changeHighLow
         currentPrice["Change Today Close Yesterday Close"] = changeTodayYesterday
 
         # Stock Information
@@ -178,7 +178,7 @@ def createStockDetails(stocks, name, name_analyst):
 
         stockStats['Name'] = name
         stockStats['Industry'] = industry
-        stockStats['Market Cap'] = marketCap * 1000
+        stockStats['Market Cap'] = marketCap * 1000000
         stockStats['Outstanding Shares'] = outstandingShares * 1000000
         stockStats['Next Earnings Date'] = nextDateFormatted
         stockStats['PE Ratio'] = peRatio
@@ -252,8 +252,6 @@ currStockDetails = createStockDetails(curr_stocks, 'yf_owned_stocks', 'yf_owned_
 currStockDetailsFormatted = json.dumps(currStockDetails,indent=2)
 createFile(currStockDetails, "owned_stocks")
 
-print(currStockDetailsFormatted)
-
 print("Sleeping for 60 seconds!")
 time.sleep(60)
 print("Sleep Ends!")
@@ -263,5 +261,10 @@ print("Getting Stock Data for Watch List Stocks")
 watchlistStocksDetails = createStockDetails(watchlist_stocks, 'yf_watchlist_stocks', 'yf_watchlist_stocks_analyst_data')
 watchlistStocksDetailsFormatted = json.dumps(watchlistStocksDetails, indent=2)
 createFile(watchlistStocksDetails, "watchlist_stocks")
-print(watchlistStocksDetailsFormatted)
+
+print("Sleeping for 60 seconds!")
+time.sleep(60)
+print("Sleep Ends!")
+
+
 

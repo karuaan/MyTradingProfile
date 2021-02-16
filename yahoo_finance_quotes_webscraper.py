@@ -7,14 +7,6 @@ import prettify
 from stocks_list import curr_stocks, watchlist_stocks
 import json
 
-def readFile(name):
-    currentDate = datetime.date.today().strftime("%Y%m%d")
-    outfileName = "Data/"+ name + ".json"
-
-    with open(outfileName, 'r') as outfile:
-        data = json.load(outfile)
-        return data
-
 def yf_stocks_data(stocks):
    
    stock_data = []
@@ -73,5 +65,7 @@ createFile(owned_data, 'yf_owned_stocks')
 watch_list_data = yf_stocks_data(watchlist_stocks)
 createFile(watch_list_data, 'yf_watchlist_stocks')
 
+similar_stocks_data = yf_stocks_data(similar_stocks)
+createFile(similar_stocks_data, 'yf_similar_stocks')
 
 

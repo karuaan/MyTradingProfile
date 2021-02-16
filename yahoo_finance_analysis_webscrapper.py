@@ -1,11 +1,16 @@
 import requests
+import finnhub
 from pprint import pprint
 from bs4 import BeautifulSoup
 import os
 import datetime
+from datetime import timedelta
 import prettify
 from stocks_list import curr_stocks, watchlist_stocks
+from keys import finnhub_api_key
 import json
+
+finnhub_client = finnhub.Client(api_key=finnhub_api_key)
 
 def yf_stocks_analyst_data(stocks):
     
@@ -195,6 +200,10 @@ createFile(owned_stocks_analyst_data, 'yf_owned_stocks_analyst_data')
 watchlist_stocks_analyst_data = yf_stocks_analyst_data(watchlist_stocks)
 
 createFile(watchlist_stocks_analyst_data, 'yf_watchlist_stocks_analyst_data')
+
+similar_stocks_owned = findSimilarStocksOwned(curr_stocks)
+
+similar_stocks_watchlist = findSimilarStocksWatchlist(watchlist_stocks)
 
 
 
