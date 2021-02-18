@@ -1,6 +1,5 @@
 import finnhub
 import datetime
-import yahoo_earnings_calendar
 import json
 import time
 from keys import finnhub_api_key
@@ -9,7 +8,6 @@ import os
 
 # Setup Imports
 finnhub_client = finnhub.Client(api_key=finnhub_api_key)
-yec = yahoo_earnings_calendar.YahooEarningsCalendar()
 
 def createFile(data, name):
     currentDate = datetime.date.today().strftime("%Y%m%d")
@@ -51,6 +49,8 @@ def createStockDetails(stocks, name, name_analyst):
                 yearlyLow = float(data.get('Revelant Data').get('52 Week Low'))
                 peRatio = data.get('Revelant Data').get('PE Ratio')
                 epsRatio = data.get('Revelant Data').get('EPS')
+                earningsDateStart = data.get('Revelant Data').get('Next Earnings Date After')
+                earningsDateEnd = data.get('Revelant Data').get('Next Earnings Date Before')
                 yearlyEstimate = float(data.get('Revelant Data').get('1 Year EST'))
 
         for data in yf_analyst_scraped_data:
@@ -173,14 +173,12 @@ def createStockDetails(stocks, name, name_analyst):
 
          # Next Earning Date
 
-        nextDateUnix = int(yec.get_next_earnings_date(stock))
-        nextDateFormatted = datetime.datetime.utcfromtimestamp(nextDateUnix).strftime('%m-%d-%Y')
-
         stockStats['Name'] = name
         stockStats['Industry'] = industry
         stockStats['Market Cap'] = marketCap * 1000000
         stockStats['Outstanding Shares'] = outstandingShares * 1000000
-        stockStats['Next Earnings Date'] = nextDateFormatted
+        stockStats['Next Earnings Date After'] = earningsDateStart
+        stockStats['Next Earnings Date Before'] = earningsDateEnd
         stockStats['PE Ratio'] = peRatio
         stockStats['EPS'] = epsRatio
         stockStats['1 Year EST'] = yearlyEstimate

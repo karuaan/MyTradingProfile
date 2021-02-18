@@ -201,10 +201,6 @@ watchlist_stocks_analyst_data = yf_stocks_analyst_data(watchlist_stocks)
 
 createFile(watchlist_stocks_analyst_data, 'yf_watchlist_stocks_analyst_data')
 
-similar_stocks_owned = findSimilarStocksOwned(curr_stocks)
-
-similar_stocks_watchlist = findSimilarStocksWatchlist(watchlist_stocks)
-
 
 
 
