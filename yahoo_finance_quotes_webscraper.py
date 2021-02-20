@@ -52,7 +52,10 @@ def yf_stocks_data(stocks):
            elif (key == "EPS"):
                main_dict[key] = summary_elems[index].get_text().replace(',','')
            elif (key == "1 Year EST"):
-               main_dict[key] = float(summary_elems[index].get_text().replace(',',''))
+               if (summary_elems[index].get_text() == "N/A"):
+                   main_dict[key] = float("0.1")
+               else:
+                   main_dict[key] = float(summary_elems[index].get_text().replace(',',''))
            else:
                earningsDate = summary_elems[index].get_text()
                earningsDateSplit = earningsDate.split(" - ")
@@ -92,10 +95,21 @@ def createFile(data, name):
     with open(outfileName, 'w') as outfile:
         json.dump(data,outfile)
 
+def readFile(name):
+    currentDate = datetime.date.today().strftime("%Y%m%d")
+    outfileName = "Data/"+ name + ".json"
+
+    with open(outfileName, 'r') as outfile:
+        data = json.load(outfile)
+        return data
+
 owned_data = yf_stocks_data(curr_stocks)
 createFile(owned_data, 'yf_owned_stocks')
 
 watch_list_data = yf_stocks_data(watchlist_stocks)
 createFile(watch_list_data, 'yf_watchlist_stocks')
 
+similar_stocks = readFile('similar_stocks_list')
+similar_stocks_data = yf_stocks_data(similar_stocks)
+createFile(similar_stocks_data, 'yf_similar_stocks')
 

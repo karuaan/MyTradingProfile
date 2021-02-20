@@ -37,11 +37,22 @@ def createStockDetails(stocks, name, name_analyst):
 
     yf_analyst_scraped_data = readFile(name_analyst)
 
+    count = 0
+
     for stock in stocks:
 
         print(stock)
 
+        print(count)
+
+        count += 1
+
+        if (count > 10):
+            time.sleep(60)
+            count = 0
+
         for data in yf_scraped_data:
+
             name = data.get('Name')
 
             if (stock == name):
@@ -220,6 +231,26 @@ def createStockDetails(stocks, name, name_analyst):
         currentYearEatimatedPEChange = round(highEstimatedCurrentYearPE - lowEstimatedCurrentYearPE, 2)
         currentYearEatimatedPEChangePercent = abs(round(((highEstimatedCurrentYearPE - lowEstimatedCurrentYearPE) / lowEstimatedCurrentYearPE ) * 100,2))
 
+        related_stocks_list = finnhub_client.company_peers(stock)
+
+        related_stock_tickers = []
+
+        for related_stock in related_stocks_list:
+            if (related_stock == stock):
+                continue
+            else:
+                related_stock_tickers.append(related_stock)
+        
+        related_stocks = []
+
+        for tick in related_stock_tickers[:4]:
+
+            if ("." in tick):
+                continue
+            else:
+                related_stocks.append(tick)
+
+        print(related_stocks)
         stockAnalytics["Buy Rating"] = buyRating
         stockAnalytics["Hold Rating"] = holdRating
         stockAnalytics["Sell Rating"] = sellRating
@@ -239,7 +270,7 @@ def createStockDetails(stocks, name, name_analyst):
         stockDetails['Stock Recommendations'] = stockRecommendations
         stockDetails['Current Quarter Analysts Estimates'] = analystEstimatedTrendsCurrentQuarter
         stockDetails['Current Year Analysts Estimates'] = analystEstimatedTrendsCurrentYear
-        stockDetails['Related Stocks'] = related_stocks_list
+        stockDetails['Related Stocks'] = related_stocks
 
         stockStatistics.append(stockDetails)
     return stockStatistics
@@ -254,7 +285,7 @@ print("Sleeping for 60 seconds!")
 time.sleep(60)
 print("Sleep Ends!")
 
-print("Getting Stock Data for Watch List Stocks")
+print("Getting Stock Data for Watch List Stocks!")
 
 watchlistStocksDetails = createStockDetails(watchlist_stocks, 'yf_watchlist_stocks', 'yf_watchlist_stocks_analyst_data')
 watchlistStocksDetailsFormatted = json.dumps(watchlistStocksDetails, indent=2)
@@ -264,5 +295,9 @@ print("Sleeping for 60 seconds!")
 time.sleep(60)
 print("Sleep Ends!")
 
+print("Getting Stock Data for Similar Stocks!")
 
-
+similar_stocks = readFile('similar_stocks_list')
+watchlistStocksDetails = createStockDetails(similar_stocks, 'yf_similar_stocks', 'yf_similar_stocks_analyst_data')
+watchlistStocksDetailsFormatted = json.dumps(watchlistStocksDetails, indent=2)
+createFile(watchlistStocksDetails, "similar_stocks")

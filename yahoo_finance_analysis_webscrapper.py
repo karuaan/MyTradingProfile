@@ -1,5 +1,4 @@
 import requests
-import finnhub
 from pprint import pprint
 from bs4 import BeautifulSoup
 import os
@@ -7,10 +6,15 @@ import datetime
 from datetime import timedelta
 import prettify
 from stocks_list import curr_stocks, watchlist_stocks
-from keys import finnhub_api_key
 import json
 
-finnhub_client = finnhub.Client(api_key=finnhub_api_key)
+def readFile(name):
+    currentDate = datetime.date.today().strftime("%Y%m%d")
+    outfileName = "Data/"+ name + ".json"
+
+    with open(outfileName, 'r') as outfile:
+        data = json.load(outfile)
+        return data
 
 def yf_stocks_analyst_data(stocks):
     
@@ -194,12 +198,17 @@ def createFile(data, name):
         json.dump(data,outfile)
 
 owned_stocks_analyst_data = yf_stocks_analyst_data(curr_stocks)
-
 createFile(owned_stocks_analyst_data, 'yf_owned_stocks_analyst_data')
 
 watchlist_stocks_analyst_data = yf_stocks_analyst_data(watchlist_stocks)
-
 createFile(watchlist_stocks_analyst_data, 'yf_watchlist_stocks_analyst_data')
+
+similar_stocks = readFile('similar_stocks_list')
+similar_stocks_analyst_data = yf_stocks_analyst_data(similar_stocks)
+createFile(similar_stocks_analyst_data, 'yf_similar_stocks_analyst_data')
+
+
+
 
 
 
